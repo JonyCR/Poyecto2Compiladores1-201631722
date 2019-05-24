@@ -28,6 +28,7 @@ public class Manejador1 {
     List<Variable> variables = new ArrayList<>();
     List<String> codigoHtml = new ArrayList<>();
     JTextArea areaDeEdicion;
+    JTextArea areaDeHTML;
     Pestaña pestañaPrincipal;
     String print = "";
     String texto = "";
@@ -38,10 +39,13 @@ public class Manejador1 {
     Object[] simbolo = new Object[2];
     public ArrayList<NuevoError> erroresRecibidos = new ArrayList<>();
     ArrayList<String> codigoHtmlFinal = new ArrayList<>();
+    public String htmlCompletoF = "";
 
-    public Manejador1(JTextArea areaDeEdicion, Pestaña pestañaPrincipal, String nombreArchivo, JTable tablaDeSimbolos) {
+
+    public Manejador1(JTextArea areaDeEdicion, Pestaña pestañaPrincipal, String nombreArchivo, JTable tablaDeSimbolos, JTextArea areaDeHTML) {
         this.condicionesIf = new ArrayList<>();
         this.areaDeEdicion = areaDeEdicion;
+        this.areaDeHTML = areaDeHTML;
         this.pestañaPrincipal = pestañaPrincipal;
         this.nombreArchivo = nombreArchivo;
         this.tablaDeSimbolos = tablaDeSimbolos;
@@ -51,7 +55,7 @@ public class Manejador1 {
     public void analizarTexto(String texto, int tiempo) {
         //this.codigoHtml.clear();
         //this.condicionesIf.clear();
-
+        this.codigoHtmlFinal.clear();
         this.texto = "";
         this.print = "";
         Primer_Analizador_Lexico lexico = new Primer_Analizador_Lexico(new StringReader(texto));
@@ -239,6 +243,12 @@ public class Manejador1 {
         for (int i = 0; i < this.codigoHtmlFinal.size(); i++) {
             System.out.print(" " + codigoHtmlFinal.get(i));
         }
+         
+        for (int i = 0; i < codigoHtmlFinal.size(); i++) {
+            htmlCompletoF = htmlCompletoF + " " + codigoHtmlFinal.get(i);
+        }
+     
+        areaDeHTML.setText(htmlCompletoF);
     }
 
     public boolean agregar() {
@@ -518,7 +528,7 @@ public class Manejador1 {
         for (int i = 0; filas > i; i++) {
             modelo.removeRow(0);
         }
-        this.codigoHtmlFinal.clear();
+        
         this.erroresRecibidos.clear();
         this.codigoHtml.clear();
         this.codigoWhile.clear();

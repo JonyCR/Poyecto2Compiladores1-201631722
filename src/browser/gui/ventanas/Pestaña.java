@@ -41,7 +41,7 @@ public class Pestaña extends javax.swing.JPanel {
     Manejador1 manejador1;
     Manejador2 manejador2;
     ArrayList<NuevoError> erroresEncontrados = new ArrayList<>();
-    String htmlGenerado;
+    String htmlGenerado = "";
 
     /**
      * Creates new form ventana
@@ -52,12 +52,13 @@ public class Pestaña extends javax.swing.JPanel {
         this.pathIn = path;
         this.nombreDeArchivo = nombreDeArchivo;
         this.textoImportado = textoImportado;
-        manejador1 = new Manejador1(this.entradaTextArea, this, nombreDeArchivo, this.jTable1);
+        manejador1 = new Manejador1(this.entradaTextArea, this, nombreDeArchivo, this.jTable1, this.htmlFinalTextArea);
         manejador2 = new Manejador2(this.entradaTextArea, this, this.salidaTextPane, this.tituloHTMLLabel, nombreDeArchivo);
         TextLineNumber lineNumber = new TextLineNumber(salidaTextPane);
         TextLineNumber lineNumber2 = new TextLineNumber(entradaTextArea);
         jScrollPane1.setRowHeaderView(lineNumber);
         jScrollPane3.setRowHeaderView(lineNumber2);
+        entradaTextArea.setLineWrap(true);
         entradaTextArea.setText(textoImportado);
         entradaTextArea.addCaretListener(new CaretListener() {
 
@@ -107,6 +108,8 @@ public class Pestaña extends javax.swing.JPanel {
         jLabel1 = new javax.swing.JLabel();
         tiempoSpinner = new javax.swing.JSpinner();
         guardarHTMLButton = new javax.swing.JButton();
+        jScrollPane4 = new javax.swing.JScrollPane();
+        htmlFinalTextArea = new javax.swing.JTextArea();
 
         salidaTextPane.setEditable(false);
         jScrollPane1.setViewportView(salidaTextPane);
@@ -133,6 +136,7 @@ public class Pestaña extends javax.swing.JPanel {
         });
 
         verHTMLButton.setText("Visualizar HTML");
+        verHTMLButton.setEnabled(false);
         verHTMLButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 verHTMLButtonActionPerformed(evt);
@@ -196,6 +200,11 @@ public class Pestaña extends javax.swing.JPanel {
             }
         });
 
+        htmlFinalTextArea.setEditable(false);
+        htmlFinalTextArea.setColumns(20);
+        htmlFinalTextArea.setRows(5);
+        jScrollPane4.setViewportView(htmlFinalTextArea);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -203,31 +212,33 @@ public class Pestaña extends javax.swing.JPanel {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(guardarButton)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(guardarComoButton)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(lineColLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addComponent(jScrollPane3)
-                    .addComponent(jScrollPane2)
+                    .addComponent(jScrollPane4)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(codigoEmbebidoButton)
-                        .addGap(54, 54, 54)
-                        .addComponent(jLabel1)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                .addComponent(guardarButton)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(guardarComoButton)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(lineColLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addComponent(jScrollPane3)
+                            .addComponent(jScrollPane2)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(codigoEmbebidoButton)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(jLabel1)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(tiempoSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(tiempoSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, Short.MAX_VALUE)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(verHTMLButton)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(guardarHTMLButton)
-                        .addGap(84, 84, 84)
-                        .addComponent(guardarErroresButton))
-                    .addComponent(jScrollPane1)
-                    .addComponent(tituloHTMLLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(verHTMLButton)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(guardarHTMLButton)
+                                .addGap(84, 84, 84)
+                                .addComponent(guardarErroresButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addComponent(jScrollPane1)
+                            .addComponent(tituloHTMLLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -241,11 +252,11 @@ public class Pestaña extends javax.swing.JPanel {
                     .addComponent(tituloHTMLLabel))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 471, Short.MAX_VALUE)
+                        .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 474, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 131, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 94, Short.MAX_VALUE))
+                    .addComponent(jScrollPane1))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(codigoEmbebidoButton)
@@ -254,6 +265,8 @@ public class Pestaña extends javax.swing.JPanel {
                     .addComponent(jLabel1)
                     .addComponent(tiempoSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(guardarHTMLButton))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 78, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
@@ -263,10 +276,9 @@ public class Pestaña extends javax.swing.JPanel {
         int value = (Integer) tiempoSpinner.getValue();
         int tiempoMs = value * 1000;
         manejador1.analizarTexto(entradaTextArea.getText(), tiempoMs);
-
         System.out.println("\n\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n\n");
-
-        htmlGenerado = manejador1.retornarHTMLGenerado();
+        htmlGenerado = manejador1.htmlCompletoF;
+        verHTMLButton.setEnabled(true);
     }//GEN-LAST:event_codigoEmbebidoButtonActionPerformed
 
     private void guardarButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_guardarButtonActionPerformed
@@ -274,9 +286,11 @@ public class Pestaña extends javax.swing.JPanel {
     }//GEN-LAST:event_guardarButtonActionPerformed
 
     private void verHTMLButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_verHTMLButtonActionPerformed
-        manejador2.analizarTexto(htmlGenerado, 0);
-        System.out.println(htmlGenerado);
-        System.out.println("\n\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n\n");
+        System.out.println(" INICIO +++"+htmlGenerado+" ++++ FINAL");
+        manejador2.analizarTexto(htmlFinalTextArea.getText(), 0);
+       
+        System.out.println("\n\n~~~~~~~~~~~~~~~~~~~~~ HTML ANALIZADO ~~~~~~~~~~~~~~~~~~~~~~~~\n\n");
+        verHTMLButton.setEnabled(false);
     }//GEN-LAST:event_verHTMLButtonActionPerformed
 
     private void guardarComoButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_guardarComoButtonActionPerformed
@@ -388,10 +402,12 @@ public class Pestaña extends javax.swing.JPanel {
     private javax.swing.JButton guardarComoButton;
     private javax.swing.JButton guardarErroresButton;
     private javax.swing.JButton guardarHTMLButton;
+    private javax.swing.JTextArea htmlFinalTextArea;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
+    private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JTable jTable1;
     private javax.swing.JLabel lineColLabel;
     private javax.swing.JTextPane salidaTextPane;

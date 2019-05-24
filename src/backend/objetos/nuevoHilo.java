@@ -6,6 +6,7 @@ import java.util.logging.Logger;
 
 public class nuevoHilo extends Thread {
      Primer_Analizador_Sintactico analizador;
+     
     public nuevoHilo(String nombreHilo,Primer_Analizador_Sintactico analizador){
         super(nombreHilo);
         this.analizador=analizador;
