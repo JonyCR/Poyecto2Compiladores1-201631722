@@ -268,7 +268,7 @@ public class Manejador1 {
         return resultado;
     }
 
-    public void cambiarValIf() {
+    public void cambiarValIf() {    
         condicionesIf.set(condicionesIf.size() - 1, !condicionesIf.get(condicionesIf.size() - 1));
     }
 
