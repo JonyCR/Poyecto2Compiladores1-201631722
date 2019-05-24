@@ -1,0 +1,251 @@
+/*--------------- 1ra Area: Codigo de Usuario -----------------------*/
+//-------> importaciones, paquetes
+package backend.analizadores;
+import backend.objetos.*;
+import java_cup.runtime.Symbol;
+import java.util.ArrayList;
+import java.lang.Math;
+
+//------> Codigo para el parser,variables, metodos
+parser code
+{:
+    
+    public Manejador1 manejador;
+    public ArrayList<NuevoError> erroresHTML = new ArrayList<>();
+    public String nombreArchivo;
+    public int tiempoDelay;
+
+    public Primer_Analizador_Sintactico(Primer_Analizador_Lexico lex, Manejador1 manejador, String nombreArchivo, int tiempoDelay) { 
+            super(lex);
+            this.manejador = manejador;
+            this.nombreArchivo = nombreArchivo;
+            this.tiempoDelay = tiempoDelay;
+    }
+
+    public void debbug() throws InterruptedException{
+            Thread.sleep(tiempoDelay);
+    }
+
+    //Metodo al que se llama automaticamente ante algun error sintactico
+    public void syntax_error(Symbol s)
+    {        
+        String lexema = s.value.toString();
+        int fila = s.right+1;
+        int columna = s.left;
+        
+        System.out.println("¡ Error Sintactico Recuperado !");
+        System.out.println("\t\tLexema: "+lexema);
+        System.out.println("\t\tFila: "+fila);
+        System.out.println("\t\tColumna: "+columna);    
+
+        erroresHTML.add(new NuevoError(fila, columna, "No se esperaba el token: "+lexema, nombreArchivo, "Sintactico"));
+    }
+
+    //Metodo al que se llama en el momento en que ya no es posible una recuperacion de errores
+    public void unrecovered_syntax_error(Symbol s) throws java.lang.Exception
+    {        
+        String lexema = s.value.toString();
+        int fila = s.right +1;
+        int columna = s.left +1;
+        
+        System.out.println("¡ Error Sintactico, Modo Panico ! ");
+        System.out.println("\t\t-- Lexema: "+lexema);
+        System.out.println("\t\t-- Fila: "+fila);
+        System.out.println("\t\t-- Columna: "+columna);
+    }
+:}
+
+//------> Codigo para las acciones gramaticales
+action code
+{:
+:}
+
+/*--------------- 2da Area: Declaraciones -----------------------*/
+//------> Declaracion de terminales 
+terminal String ErrorLexico, AbrirCorchetes, AbrirCE, CerrarCE,
+                            CerrarCorchetes, AbrirParentesis, CerrarParentesis, Coma, Igual, Mas, Menos, Diagonal, Asterisco, Variable, Numero, MayorQue, MenorQue, iff, orr, MayorIgual, MenorIgual, 
+                            DiferenteDe, too, Asignacion, DosPuntos, PuntoYComa, andd, forr, end, thenn, truee, elsee, printt, begin, falsee, whilee, stringg, booleann, integerr, var, TextoEComilla, Comillas,
+                            
+                            SEMenorQue, SEMayorQue, SEAmpersand, SEa, SEe, SEi, SEo, SEu, SEN, SEn,  centerC, leftC, rightC, justifiedC, circle, square, disc, num1, AA, black, olive, teal, red, blue, maroon, navy, gray, lime, fuchsia,
+                             white, green, purple, silver, yellow, aqua, valorEntero, Porcentaje, Hexa, TextoTLink, TextoEComillas;
+
+
+//------> Declaracion de no terminales
+non terminal String GENESIS,iff1,iff2,instr,instr2,instr3,S0,S2,DeclVar, DefVar, TipoVar, Bloque,Bloque2, Prnt, Fr, A, Condicional, condicion, condicion1, Whl, contenido, valorVar, S1, instr1, S01, S00, palabras;
+non terminal Variable valor;
+//------> Precedencia de menor a mayor 
+precedence left Mas, Menos;
+precedence left Diagonal, Asterisco;
+
+start with GENESIS;
+
+/*--------------- 3ra Area: Reglas Semanticas -----------------------*/
+GENESIS::=  S00 {: parser.manejador.obtenerErrores(erroresHTML); parser.manejador.imprimirHTMLFinal(); :}
+;
+
+S00::= S00 S01
+           | S00 palabras
+           | S01
+           | palabras
+;
+
+palabras::= AbrirCorchetes:a {: parser.manejador.addTexto(a); :} |  
+                            CerrarCorchetes:a {: parser.manejador.addTexto(a); :}| AbrirParentesis:a {: parser.manejador.addTexto(a); :}| CerrarParentesis:a {: parser.manejador.addTexto(a); :}| Coma:a {: parser.manejador.addTexto(a); :}| Igual:a {: parser.manejador.addTexto(a); :}| Mas:a {: parser.manejador.addTexto(a); :}| Menos:a {: parser.manejador.addTexto(a); :}| Diagonal:a {: parser.manejador.addTexto(a); :}| Asterisco:a {: parser.manejador.addTexto(a); :}| Variable:a {: parser.manejador.addTexto(a); :}| Numero:a {: parser.manejador.addTexto(a); :}| MayorQue:a {: parser.manejador.addTexto(a); :}| MenorQue:a {: parser.manejador.addTexto(a); :}| iff:a {: parser.manejador.addTexto(a); :}| orr:a {: parser.manejador.addTexto(a); :}| MayorIgual:a {: parser.manejador.addTexto(a); :}| MenorIgual:a {: parser.manejador.addTexto(a); :}| 
+                            DiferenteDe:a {: parser.manejador.addTexto(a); :}| too:a {: parser.manejador.addTexto(a); :}| Asignacion:a {: parser.manejador.addTexto(a); :}| DosPuntos:a {: parser.manejador.addTexto(a); :}| PuntoYComa:a {: parser.manejador.addTexto(a); :}| andd:a {: parser.manejador.addTexto(a); :}| forr:a {: parser.manejador.addTexto(a); :}| end:a {: parser.manejador.addTexto(a); :}| thenn:a {: parser.manejador.addTexto(a); :}| truee:a {: parser.manejador.addTexto(a); :}| elsee:a {: parser.manejador.addTexto(a); :}| printt:a {: parser.manejador.addTexto(a); :}| begin:a {: parser.manejador.addTexto(a); :}| falsee:a {: parser.manejador.addTexto(a); :}| whilee:a {: parser.manejador.addTexto(a); :}| stringg:a {: parser.manejador.addTexto(a); :}| booleann:a {: parser.manejador.addTexto(a); :}| integerr:a {: parser.manejador.addTexto(a); :}| var:a {: parser.manejador.addTexto(a); :}| TextoEComilla:a {: parser.manejador.addTexto(a); :}|
+                            SEMenorQue:a {: parser.manejador.addTexto(a); :}| SEMayorQue:a {: parser.manejador.addTexto(a); :}| SEAmpersand:a {: parser.manejador.addTexto(a); :}| SEa:a {: parser.manejador.addTexto(a); :}| SEe:a {: parser.manejador.addTexto(a); :}| SEi:a {: parser.manejador.addTexto(a); :}| SEo:a {: parser.manejador.addTexto(a); :}| SEu:a {: parser.manejador.addTexto(a); :}| SEN:a {: parser.manejador.addTexto(a); :}| SEn:a {: parser.manejador.addTexto(a); :}|  centerC:a {: parser.manejador.addTexto(a); :}| leftC:a {: parser.manejador.addTexto(a); :}| rightC:a {: parser.manejador.addTexto(a); :}| justifiedC:a {: parser.manejador.addTexto(a); :}| circle:a {: parser.manejador.addTexto(a); :}| square:a {: parser.manejador.addTexto(a); :}| disc:a {: parser.manejador.addTexto(a); :}| num1:a {: parser.manejador.addTexto(a); :}| AA:a {: parser.manejador.addTexto(a); :}| black:a {: parser.manejador.addTexto(a); :}| olive:a {: parser.manejador.addTexto(a); :}| teal:a {: parser.manejador.addTexto(a); :}| red:a {: parser.manejador.addTexto(a); :}| blue:a {: parser.manejador.addTexto(a); :}| maroon:a {: parser.manejador.addTexto(a); :}| navy:a {: parser.manejador.addTexto(a); :}| gray:a {: parser.manejador.addTexto(a); :}| lime:a {: parser.manejador.addTexto(a); :}| fuchsia:a {: parser.manejador.addTexto(a); :}|
+                             white:a {: parser.manejador.addTexto(a); :}| green:a {: parser.manejador.addTexto(a); :}| purple:a {: parser.manejador.addTexto(a); :}| silver:a {: parser.manejador.addTexto(a); :}| yellow:a {: parser.manejador.addTexto(a); :}| aqua:a {: parser.manejador.addTexto(a); :}| valorEntero:a {: parser.manejador.addTexto(a); :}| Porcentaje:a {: parser.manejador.addTexto(a); :}| Hexa:a {: parser.manejador.addTexto(a); :}| TextoTLink:a {: parser.manejador.addTexto(a); :}| TextoEComillas:a {: parser.manejador.addTexto(a); :} 
+;
+
+S01::= AbrirCE  S0 CerrarCE {:parser.manejador.printHtml(); :}
+;
+
+S0::= instr
+    | S0 instr
+    | instr error
+    | error
+;
+
+instr::=DeclVar
+    | Bloque
+    | Condicional
+    | Fr
+    | Whl
+    | Prnt
+    | DefVar
+;
+
+//------------------------------------------------------------------------------------------------------------ Declaracion de Variable
+DeclVar::= var Variable:a DosPuntos TipoVar:e PuntoYComa {: parser.manejador.addVariable(a,e, eright+1, eleft); debbug(); :}
+;
+
+//------------------------------------------------------------------------------------------------------------ Tipo de Variable
+TipoVar::= integerr:e {:RESULT=e;:} 
+                | stringg:e {:RESULT=e;:} 
+                | booleann:e {:RESULT=e;:}
+;
+
+//------------------------------------------------------------------------------------------------------------ For
+Fr::= forr Variable Asignacion A too A Bloque2
+    forr Variable Asignacion A too A instr2 
+;
+
+//------------------------------------------------------------------------------------------------------------ While
+Whl::= whilee condicion:e 
+    //{:parser.manejador.addCondiconTexto(e);:}
+    Bloque2 {:parser.manejador.ejecutarWhile();:}
+    | whilee condicion:e 
+    //{:parser.manejador.addCondiconTexto(e);:} 
+    instr3 {:parser.manejador.ejecutarWhile();:}
+;
+
+//------------------------------------------------------------------------------------------------------------ Condicional ( If )
+Condicional::= iff1 Bloque iff2 Bloque {:parser.manejador.terminarIf();:}
+            |iff1 instr2 iff2 Bloque {:parser.manejador.terminarIf();:}
+            |iff1 Bloque iff2 instr2 {:parser.manejador.terminarIf();:}
+            |iff1 instr2 iff2 instr2 {:parser.manejador.terminarIf();:}
+;
+
+iff1::= iff condicion:e  thenn {: parser.manejador.funcionIf(e); :}
+;
+
+iff2::= elsee {:parser.manejador.cambiarValIf();:}
+;
+
+//------------------------------------------------------------------------------------------------------------ Condicion
+condicion::= condicion:a andd:b condicion1:c {:RESULT=parser.manejador.conectoresLogicos(a,b,c);:}
+                    | condicion:a orr:b condicion1:c {:RESULT=parser.manejador.conectoresLogicos(a,b,c);:}
+                    | condicion1:e {:RESULT=e;:}
+;
+
+condicion1::= valor:a MayorQue:b valor:c {:RESULT=parser.manejador.evaluarCondicion(a,b,c, cright+1, cleft);:}
+                   | valor:a MenorQue:b valor:c {:RESULT=parser.manejador.evaluarCondicion(a,b,c, cright+1, cleft);:}
+                   | valor:a MayorIgual:b valor:c {:RESULT=parser.manejador.evaluarCondicion(a,b,c, cright+1, cleft);:}
+                   | valor:a MenorIgual:b valor:c {:RESULT=parser.manejador.evaluarCondicion(a,b,c, cright+1, cleft);:}
+                   | valor:a Igual:b valor:c {:RESULT=parser.manejador.evaluarCondicion(a,b,c, cright+1, cleft);:}
+                   | valor:a DiferenteDe:b valor:c {:RESULT=parser.manejador.evaluarCondicion(a,b,c, cright+1, cleft);:}
+;
+
+valor::= Variable:e  {:RESULT=parser.manejador.obtenerVar(e);:}
+            | Numero:e {:RESULT=new Variable("num.","INTEGER",e);:}
+            | truee:e {:RESULT=new Variable("bool.","BOOLEAN",e);:}
+            | falsee:e {:RESULT=new Variable("bool.","BOOLEAN",e);:}
+            | TextoEComilla:e {:RESULT= new Variable("text.","STRING",e);:}
+;
+
+//------------------------------------------------------------------------------------------------------------ Print
+Prnt::= printt AbrirParentesis contenido:e CerrarParentesis PuntoYComa {:parser.manejador.print(e);:}
+;
+
+contenido::= contenido:a Coma TextoEComilla:b {:parser.manejador.stringPrint(","+b);RESULT=a.concat(b);:}
+                      | contenido:a Coma Variable:b {:parser.manejador.stringPrint(","+b);RESULT=a.concat(parser.manejador.getValorVar(b, bright+1, bleft));:} 
+                      | TextoEComilla:e {:parser.manejador.stringPrint(e);RESULT=e;:}
+                      | Variable:e {:parser.manejador.stringPrint(e);RESULT=parser.manejador.getValorVar(e, eright+1, eleft);:}
+;
+
+//------------------------------------------------------------------------------------------------------------ Bloque
+Bloque::= begin AbrirCorchetes S1 CerrarCorchetes end PuntoYComa       
+;
+Bloque2::= begin AbrirCorchetes S2 CerrarCorchetes end PuntoYComa       
+;
+
+S1::= instr1
+    | S1 instr1
+;
+S2::= instr3
+    | S1 instr3
+;
+
+
+instr1::=DeclVar
+    | Bloque
+    | Condicional
+    | Fr
+    | Whl
+    | Prnt 
+    | DefVar
+;
+instr2::=DeclVar
+    | Condicional
+    | Fr
+    | Whl
+    | Prnt 
+    | DefVar
+;
+instr3::=DeclVar
+    | Prnt 
+    | DefVar
+;
+
+
+//------------------------------------------------------------------------------------------------------------ Definir Variable
+DefVar::= Variable:a Asignacion valorVar:e PuntoYComa {:parser.manejador.defVar(a,e, aright+1, aleft);  debbug(); :}
+;
+
+valorVar::= A:e {:RESULT=e;:}
+            | truee:e {:parser.manejador.ops.add(e); RESULT="TRUE";:}
+            | falsee:e {:parser.manejador.ops.add(e); RESULT="FALSE";:}
+            | TextoEComilla:e {:parser.manejador.ops.add(e);RESULT=e.concat("\"");:}
+;
+
+//------------------------------------------------------------------------------------------------------------ Operaciones Aritmeticas
+A::= A:a Mas:c A:b {: parser.manejador.operar(c);int val1 = Integer.parseInt(a);
+                            int val2 = Integer.parseInt(b);
+                            int r = val1 + val2;
+                            RESULT = String.valueOf(r); :}
+      | A:a Menos:c A:b {:parser.manejador.operar(c); int val1 = Integer.parseInt(a);
+                            int val2 = Integer.parseInt(b);
+                            int r = val1 - val2;
+                            RESULT = String.valueOf(r); :}
+      | A:a Diagonal:c A:b {:parser.manejador.operar(c); int val1 = Integer.parseInt(a);
+                            int val2 = Integer.parseInt(b);
+                            int r = val1 / val2;
+                            r = (int) (Math.round(r));
+                            RESULT = String.valueOf(r); :}
+      | A:a Asterisco:c A:b {: parser.manejador.operar(c);int val1 = Integer.parseInt(a);
+                            int val2 = Integer.parseInt(b);
+                            int r = val1 * val2;
+                            RESULT = String.valueOf(r); :}
+      | Numero:a {:parser.manejador.ops.add(a);RESULT=a;:}
+      | Variable:a {:RESULT=parser.manejador.getVarInt(a, aright+1, aleft);:}
+;
+

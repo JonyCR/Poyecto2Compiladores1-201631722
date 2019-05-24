@@ -1,0 +1,372 @@
+
+/*--------------- 1ra Area: Codigo de Usuario -----------------------*/
+//-------> importaciones, paquetes
+package backend.analizadores;
+import backend.objetos.*;
+import java_cup.runtime.Symbol;
+import java.util.ArrayList;
+import java.lang.Math;
+
+//------> Codigo para el parser,variables, metodos
+parser code
+{:
+    
+    public Manejador2 manejador;
+    public ArrayList<NuevoError> erroresHTML = new ArrayList<>();
+    public String nombreArchivo;
+    public int tiempoDelay;
+
+    public Segundo_Analizador_Sintactico(Segundo_Analizador_Lexico lex, Manejador2 manejador, String nombreArchivo, int tiempoDelay) { 
+            super(lex);
+            this.manejador = manejador;
+            this.nombreArchivo = nombreArchivo;
+            this.tiempoDelay = tiempoDelay;
+    }
+
+    public void debbug() throws InterruptedException{
+            Thread.sleep(tiempoDelay);
+    }
+
+  
+    //Metodo al que se llama automaticamente ante algun error sintactico
+    public void syntax_error(Symbol s)
+    {        
+        String lexema = s.value.toString();
+        int fila = s.right+1;
+        int columna = s.left;
+        
+        System.out.println("¡ Error Sintactico Recuperado !");
+        System.out.println("\t\tLexema: "+lexema);
+        System.out.println("\t\tFila: "+fila);
+        System.out.println("\t\tColumna: "+columna);    
+        
+        erroresHTML.add(new NuevoError(fila, columna, "No se esperaba el token: "+lexema, nombreArchivo, "Semantico"));
+
+    }
+
+public void imprimirErrores()
+    {        
+        for(int i=0; i<erroresHTML.size(); i++){
+            System.out.println("Linea: "+erroresHTML.get(i).getLinea());
+            System.out.println("Columna: "+erroresHTML.get(i).getColumna());
+            System.out.println("Descripcion: "+erroresHTML.get(i).getDescripcion());
+            System.out.println("Archivo: "+erroresHTML.get(i).getArchivo());
+            System.out.println("Tipo: "+erroresHTML.get(i).getTipo());
+        }
+
+    }
+
+    //Metodo al que se llama en el momento en que ya no es posible una recuperacion de errores
+    public void unrecovered_syntax_error(Symbol s) throws java.lang.Exception
+    {        
+        String lexema = s.value.toString();
+        int fila = s.right +1;
+        int columna = s.left +1;
+        
+        System.out.println("¡ Error Sintactico, Modo Panico ! ");
+        System.out.println("\t\t-- Lexema: "+lexema);
+        System.out.println("\t\t-- Fila: "+fila);
+        System.out.println("\t\t-- Columna: "+columna);
+    }
+:}
+
+//------> Codigo para las acciones gramaticales
+action code
+{:
+:}
+
+/*--------------- 2da Area: Declaraciones -----------------------*/
+//------> Declaracion de terminales 
+terminal String ErrorLexico, html, head, title, body, bgcolor, text, link, center, centerC, p, align, leftC, rightC, justifiedC, b, u, i, hr, width, br, nobr, strike, name, href, blink, sub, sup, font, size, blockquote,
+                            face, color, ul, li, circle, square, disc, ol, type, startt, num1, black, olive, teal, red, blue, maroon, navy, gray, lime, fuchsia, green, white, purple, silver, yellow, aqua, valorEntero, AbrirCorchetes,
+                            CerrarCorchetes, AbrirParentesis, CerrarParentesis, Coma, Igual, Mas, Menos, Diagonal, Asterisco, Hexa, Variable, Cometario, Numero, MayorQue, MenorQue, iff, orr, MayorIgual, MenorIgual, 
+                            DiferenteDe, too, Asignacion, DosPuntos, PuntoYComa, andd, forr, end, thenn, truee, A, elsee, printt, begin, falsee, whilee, stringg, booleann, integerr, var, TextoEComillas, SEMenorQue,
+                            SEMayorQue, SEAmpersand, SEa, SEe, SEi, SEo, SEu, SEN, SEn, Comillas, Porcentaje, TextoTLink, Aenlace;
+
+
+//------> Declaracion de no terminales
+non terminal String GENESIS, S0, AbrirHtml, CerrarHtml, ListaOrd, ListaOrd1, Cuerpo, tipoListOrd, EstrBODY, EstrHEAD, AbrirHead, CerrarHead, AbrirBody, CerrarBody, AB1, Colores, AB2, Ttl, tipoListDesOrd,
+                                    itemsListaDesOrd, Estructuras, ListaDesOrd, CambioLinea, itemsDesOrd, itemsOrd, index, TxtCentrado, TxtParrafo, tipoParrafo, Alineacion, TipoLetra, Texto, Palabras, ConfigTipoLetra,
+                                    CFTL,iniUl,iniUlType ,AlineacionTL, EA, Negrilla, Subrayado, Italica,  Tachado , Parpadeante , Subindice , Superindice, LineaHorizontal, CFLH, ConfigLineaHor, AlineacionLH, Ancho,
+                                    EstructurasAnidadas, Estructuras0, Sangria, SinCambioLinea, EnlaceAncla, EnlaceLink, TextoAN, PalabrasAN;
+
+//------> Precedencia de menor a mayor 
+
+
+start with GENESIS;
+
+/*--------------- 3ra Area: Reglas Semanticas -----------------------*/
+GENESIS::=  AbrirHtml S0 CerrarHtml {: parser.imprimirErrores(); System.out.println(" ----------------------------------------------------------- Lectura de documento HTML terminada.  -------------------------------------------------------------------- "); :}
+;
+
+S0::= EstrHEAD EstrBODY
+    | EstrBODY
+;
+
+//------------------------------------------------------------------------------------------------------------ Estructura de HEAD
+EstrHEAD::= AbrirHead CerrarHead {: System.out.println(" ----------------------------------------------------------- Lectura de ESTRUCTURA HEAD terminada.  -------------------------------------------------------------------- "); :}
+                    | AbrirHead Ttl CerrarHead {: System.out.println(" ----------------------------------------------------------- Lectura de ESTRUCTURA HEAD terminada.  -------------------------------------------------------------------- "); :}
+;
+
+Ttl::= MenorQue  title MayorQue  Texto:T MenorQue Diagonal title MayorQue {: parser.manejador.colocarTitulo(T); :}
+;
+
+//------------------------------------------------------------------------------------------------------------ Estructura de BODY
+EstrBODY::= AbrirBody CerrarBody 
+                    |  AbrirBody Estructuras0 CerrarBody {: System.out.println(" ----------------------------------------------------------- Lectura de ESTRUCTURA BODY terminada.  -------------------------------------------------------------------- "); :}
+;
+
+//------------------------------------------------------------------------------------------------------------ <html>
+AbrirHtml::= MenorQue html MayorQue 
+;
+
+//------------------------------------------------------------------------------------------------------------ </html>
+CerrarHtml::= MenorQue Diagonal html MayorQue 
+;
+
+//------------------------------------------------------------------------------------------------------------ <head>
+AbrirHead::= MenorQue head MayorQue 
+;
+
+//------------------------------------------------------------------------------------------------------------ </head>
+CerrarHead::= MenorQue Diagonal head MayorQue 
+;
+
+//------------------------------------------------------------------------------------------------------------ <Body>
+AbrirBody::= MenorQue body MayorQue  
+                   | MenorQue body AB1 MayorQue 
+;
+
+AB1::= AB2
+            | AB1 AB2
+;
+
+AB2::= bgcolor Igual Colores:fondo {: parser.manejador.pintarFondo(fondo); :}
+           | text Igual Colores:e {:parser.manejador.colorTexto(e);:}
+           | link Igual Colores
+;
+
+Colores::= black:a {: RESULT = a; :}
+                   | olive:a {: RESULT = a; :}
+                   | teal:a {: RESULT = a; :}
+                   | red:a {: RESULT = a; :}
+                   | blue:a {: RESULT = a; :}
+                   | maroon:a {: RESULT = a; :}
+                   | navy:a {: RESULT = a; :}
+                   | gray:a {: RESULT = a; :}
+                   | lime:a {: RESULT = a; :}
+                   | fuchsia:a{: RESULT = a; :}
+                   | green:a {: RESULT = a; :}
+                   | white:a {: RESULT = a; :}
+                   | purple:a {: RESULT = a; :}
+                   | silver:a {: RESULT = a; :}
+                   | yellow:a {: RESULT = a; :}
+                   | aqua:a {: RESULT = a; :}
+                   | Hexa:a {: RESULT = a; :}
+;
+
+//------------------------------------------------------------------------------------------------------------ </Body>
+CerrarBody::= MenorQue Diagonal body MayorQue {: System.out.println(" ------------------------- Etiqueta BODY Cerrada -------------------------------------------------------------------- "); :}
+;
+
+//------------------------------------------------------------------------------------------------------------ <Lista Desordenada>
+ListaDesOrd::= iniUl MenorQue Diagonal ul MayorQue
+                          | iniUl itemsDesOrd MenorQue Diagonal ul MayorQue {:parser.manejador.finUl();:}
+                          | iniUlType MenorQue Diagonal ul MayorQue
+                          | iniUlType itemsDesOrd MenorQue Diagonal ul MayorQue {:parser.manejador.finUl();:}
+;
+iniUl::= MenorQue ul MayorQue {:parser.manejador.addUl("null");:}
+;
+iniUlType::= MenorQue ul type Igual tipoListDesOrd:e  MayorQue {:parser.manejador.addUl(e);:}
+;
+
+
+tipoListDesOrd::= circle {: RESULT = "•"; :}
+                    | square {: RESULT = "■"; :}
+                    | disc {: RESULT = "○"; :}
+;
+
+itemsDesOrd::= MenorQue li MayorQue Texto:e MenorQue Diagonal li MayorQue {:parser.manejador.addLi(e.concat("\n"));:} 
+                    | itemsDesOrd MenorQue li MayorQue Texto:e MenorQue Diagonal li MayorQue {:parser.manejador.addLi(e.concat("\n"));:}              
+;
+
+//------------------------------------------------------------------------------------------------------------ <Lista Ordenada>
+ListaOrd::= MenorQue ol MayorQue MenorQue Diagonal ol MayorQue {:parser.manejador.finOl();:}
+                   | MenorQue ol MayorQue itemsOrd MenorQue Diagonal ol MayorQue {:parser.manejador.finOl();:}
+                   | MenorQue ol tipoListOrd MayorQue  MenorQue Diagonal ol MayorQue {:parser.manejador.finOl();:}
+                   | MenorQue ol tipoListOrd MayorQue  itemsOrd MenorQue Diagonal ol MayorQue {:parser.manejador.finOl();:}
+;
+
+itemsOrd::= MenorQue li MayorQue Texto:e MenorQue Diagonal li MayorQue {:parser.manejador.addLiOl(e);:} 
+                    | itemsOrd MenorQue li MayorQue Texto:e MenorQue Diagonal li MayorQue {:parser.manejador.addLiOl(e);:}               
+;
+
+tipoListOrd::= type Igual index:e {:parser.manejador.olTipo(e);:} 
+                    | startt Igual valorEntero:e {:parser.manejador.olInicio(e);:}
+                    | type Igual index:e startt Igual valorEntero:a {:parser.manejador.olTipo(e);parser.manejador.olInicio(a);:}
+;
+
+index::= num1:e {:RESULT=e;:}
+        | A:e {:RESULT=e;:}
+;
+                   
+
+//------------------------------------------------------------------------------------------------------------ <Cambio de linea>
+CambioLinea::= MenorQue br MayorQue {:parser.manejador.saltoLinea();:}
+;
+
+//------------------------------------------------------------------------------------------------------------ <Texto CENTRADO>
+TxtCentrado::= MenorQue center MayorQue Texto:e MenorQue Diagonal center MayorQue {:parser.manejador.escribirCentrado(e.concat("\n"));:}
+;
+
+//------------------------------------------------------------------------------------------------------------ <Texto en PARRAFO>
+TxtParrafo::= MenorQue p MayorQue Texto:e MenorQue Diagonal p MayorQue {:parser.manejador.pAlign(e.concat("\n"),"left");:}
+                       | MenorQue p tipoParrafo:e MayorQue Texto:a MenorQue Diagonal p MayorQue {:parser.manejador.pAlign(a.concat("\n"),e);:}
+;
+
+tipoParrafo::= align Igual Alineacion:e {:RESULT = e;:}
+;
+
+Alineacion::= leftC:e {:RESULT = e;:}
+                       | rightC:e {:RESULT = e;:}
+                       | centerC:e {:RESULT = e;:}
+                       | justifiedC:e {:RESULT = e;:} 
+;
+
+//------------------------------------------------------------------------------------------------------------ <TIPO DE LETRA>
+TipoLetra::= MenorQue font MayorQue Texto:e MenorQue Diagonal font MayorQue {:parser.manejador.agregarFont(e.concat("\n"));:}
+                       | MenorQue font CFTL MayorQue Texto:e MenorQue Diagonal font MayorQue {:parser.manejador.agregarFont(e.concat("\n"));:}
+;
+
+CFTL::= ConfigTipoLetra
+            | CFTL ConfigTipoLetra
+;
+
+ConfigTipoLetra::= size Igual valorEntero:e {:parser.manejador.addSizeF(e);:}
+                                | align Igual AlineacionTL:e {:parser.manejador.addAlinF(e);:}
+                                | face Igual TextoEComillas:e {:parser.manejador.addTextF(e);:}
+                                | color Igual Colores:e {:parser.manejador.addColorF(e);:}
+;
+
+AlineacionTL::= leftC:e {:RESULT=e;:}
+                         | rightC:e {:RESULT=e;:}
+                         | centerC:e {:RESULT=e;:}
+;
+
+//------------------------------------------------------------------------------------------------------------ <LINEA HORIZONTAL>
+LineaHorizontal::= MenorQue hr MayorQue
+                       | MenorQue hr CFLH MayorQue
+;
+
+CFLH::= ConfigLineaHor
+             | CFLH ConfigLineaHor
+;
+
+ConfigLineaHor::= align Igual AlineacionLH
+                                | width Igual Ancho
+                                | size Igual valorEntero
+;
+
+Ancho::= valorEntero
+               | Porcentaje
+;
+
+AlineacionLH::= leftC
+                         | rightC
+                         | centerC
+;
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------ <Estructuras Anidadas>
+
+EstructurasAnidadas::= Negrilla
+         | Subrayado
+         | Italica
+         | Tachado
+         | Parpadeante
+         | Subindice
+         | Superindice
+         | Sangria
+         | SinCambioLinea
+         | CambioLinea
+         | LineaHorizontal
+         | EnlaceAncla
+         | EnlaceLink
+;
+
+//----------------------------------------------------- Negrilla
+Negrilla::= MenorQue b MayorQue Texto:e MenorQue Diagonal b MayorQue {:parser.manejador.agregarNegrita(e);:}
+                 | MenorQue b MayorQue {:parser.manejador.agregarNegrita("");:} EstructurasAnidadas MenorQue Diagonal b MayorQue
+;
+
+//----------------------------------------------------- Subrayado
+Subrayado::= MenorQue u MayorQue Texto:e MenorQue Diagonal u MayorQue {:parser.manejador.agregarSubrayada(e);:}
+                  | MenorQue u MayorQue {:parser.manejador.agregarSubrayada("");:} EstructurasAnidadas MenorQue Diagonal u MayorQue
+;
+
+//----------------------------------------------------- Italica
+Italica::= MenorQue i MayorQue Texto:e MenorQue Diagonal i MayorQue {:parser.manejador.agregarItalica(e);:}
+                  | MenorQue i MayorQue {:parser.manejador.agregarItalica("");:} EstructurasAnidadas MenorQue Diagonal i MayorQue
+;
+
+//----------------------------------------------------- Tachado
+Tachado::= MenorQue strike MayorQue Texto:e MenorQue Diagonal strike MayorQue {:parser.manejador.agregarTachado(e);:}
+                  | MenorQue strike MayorQue {:parser.manejador.agregarTachado("");:} EstructurasAnidadas MenorQue Diagonal strike MayorQue
+;
+
+//----------------------------------------------------- Parpadeante
+Parpadeante::= MenorQue blink MayorQue Texto:e MenorQue Diagonal blink MayorQue {:parser.manejador.agregarParpadeante(e);:} 
+                  | MenorQue blink MayorQue {:parser.manejador.agregarParpadeante("");:} EstructurasAnidadas MenorQue Diagonal blink MayorQue
+;
+
+//----------------------------------------------------- Subindice
+Subindice::= MenorQue sub MayorQue Texto:e MenorQue Diagonal sub MayorQue {:parser.manejador.agregarSubIndice(e);:}
+                  | MenorQue sub MayorQue {:parser.manejador.agregarSubIndice("");:} EstructurasAnidadas MenorQue Diagonal sub MayorQue
+;
+
+//----------------------------------------------------- Superindice
+Superindice::= MenorQue sup MayorQue Texto:e MenorQue Diagonal sup MayorQue {:parser.manejador.agregarSuperIndice(e);:}
+                   | MenorQue sup MayorQue {:parser.manejador.agregarSuperIndice("");:} EstructurasAnidadas MenorQue Diagonal sup MayorQue
+;
+
+//----------------------------------------------------- Sin Cambio de Linea
+SinCambioLinea::= MenorQue nobr MayorQue Texto:e MenorQue Diagonal nobr MayorQue {:parser.manejador.agregarNobr(e);:}
+                  | MenorQue nobr MayorQue EstructurasAnidadas MenorQue Diagonal nobr MayorQue
+;
+
+//----------------------------------------------------- Sangria
+Sangria::= MenorQue blockquote MayorQue Texto:e MenorQue Diagonal blockquote MayorQue {:parser.manejador.sangria(e);:}
+                 | MenorQue blockquote MayorQue  EstructurasAnidadas MenorQue Diagonal blockquote MayorQue
+;
+
+//----------------------------------------------------- ENLACES --------------------------------------------------------------------------------------------------------------------------------------------
+EnlaceAncla::= MenorQue Aenlace name Igual TextoEComillas:e MayorQue Texto:a MenorQue Diagonal Aenlace MayorQue {:parser.manejador.addEnlaceName(e,a);:}
+            |  MenorQue Aenlace name Igual TextoEComillas:e MayorQue EstructurasAnidadas MenorQue Diagonal Aenlace MayorQue
+;
+
+EnlaceLink::= MenorQue Aenlace href Igual TextoTLink:e MayorQue Texto:a MenorQue Diagonal Aenlace MayorQue {:parser.manejador.addEnlaceRef(e,a);:}
+                        | MenorQue Aenlace href Igual TextoTLink MayorQue EstructurasAnidadas MenorQue Diagonal Aenlace MayorQue
+;
+
+Estructuras0::= Estructuras
+                           | Estructuras0 Estructuras
+                           | error Estructuras
+;
+
+Estructuras::= ListaDesOrd
+                        | ListaOrd
+                        | TxtCentrado
+                        | TxtParrafo
+                        | TipoLetra
+                        | EstructurasAnidadas
+;
+
+Texto::=  Palabras:a {: RESULT = a; :}
+               | Texto:a Palabras:b {: RESULT = a+" "+b; :} 
+;
+
+Palabras::= SEMenorQue:a {: RESULT = "<"; :} | SEMayorQue:a {: RESULT = ">"; :} | SEAmpersand:a {: RESULT = "&"; :} | SEa:a {: RESULT = "á"; :} | SEe:a {: RESULT = "é"; :} | SEi:a {: RESULT = "í"; :} | SEo:a {: RESULT = "ó"; :} | SEu:a {: RESULT = "ú"; :} | SEN:a {: RESULT = "Ñ"; :} | SEn:a {: RESULT = "ñ"; :} | AbrirCorchetes:a {: RESULT = a; :} | Comillas:a {: RESULT = a; :} | DosPuntos:a {: RESULT = a; :} | PuntoYComa:a {: RESULT = a; :} 
+                   | CerrarCorchetes:a {: RESULT = a; :} | AbrirParentesis:a {: RESULT = a; :} | CerrarParentesis:a {: RESULT = a; :} | Coma:a {: RESULT = a; :} | Igual:a {: RESULT = a; :} | Mas:a {: RESULT = a; :} | Menos:a {: RESULT = a; :} | Diagonal:a {: RESULT = a; :} | Asterisco:a {: RESULT = a; :} | p:a {: RESULT = a; :} | b:a {: RESULT = a; :} | u:a {: RESULT = a; :} | i:a {: RESULT = a; :} | hr:a {: RESULT = a; :} | ul:a {: RESULT = a; :} | ol:a {: RESULT = a; :} | li:a {: RESULT = a; :} | br:a {: RESULT = a; :}
+                   | andd:a {: RESULT = a; :} | orr:a {: RESULT = a; :} | iff:a {: RESULT = a; :} | thenn:a {: RESULT = a; :} | elsee:a {: RESULT = a; :} | whilee:a {: RESULT = a; :} | forr:a {: RESULT = a; :} | too:a {: RESULT = a; :} | printt:a {: RESULT = a; :} | begin:a {: RESULT = a; :} | end:a {: RESULT = a; :} | truee:a {: RESULT = a; :} | falsee:a {: RESULT = a; :} | Asignacion:a {: RESULT = a; :} | html:a {: RESULT = a; :} | head:a {: RESULT = a; :} | title:a {: RESULT = a; :} | body:a {: RESULT = a; :} | bgcolor:a {: RESULT = a; :} | text:a {: RESULT = a; :} 
+                   | link:a {: RESULT = a; :} | center:a {: RESULT = a; :} | align:a {: RESULT = a; :} | centerC:a {: RESULT = a; :} | leftC:a {: RESULT = a; :} | rightC:a {: RESULT = a; :} | justifiedC:a {: RESULT = a; :} | width:a {: RESULT = a; :} | nobr:a {: RESULT = a; :} | strike:a {: RESULT = a; :} | name:a {: RESULT = a; :} | href:a {: RESULT = a; :} | blink:a {: RESULT = a; :} | sub:a {: RESULT = a; :} | sup:a {: RESULT = a; :} | font:a {: RESULT = a; :} | size:a {: RESULT = a; :} | blockquote:a {: RESULT = a; :} | face:a {: RESULT = a; :}
+                   | color:a {: RESULT = a; :} | integerr:a {: RESULT = a; :} | booleann:a {: RESULT = a; :} | stringg:a {: RESULT = a; :} | var:a {: RESULT = a; :} | circle:a {: RESULT = a; :} | square:a {: RESULT = a; :} | disc:a {: RESULT = a; :} | type:a {: RESULT = a; :} | startt:a {: RESULT = a; :} | num1:a {: RESULT = a; :} | A:a {: RESULT = a; :} | black:a {: RESULT = a; :} | olive:a {: RESULT = a; :} | teal:a {: RESULT = a; :} | red:a {: RESULT = a; :} | blue:a {: RESULT = a; :} | maroon:a {: RESULT = a; :} | navy:a {: RESULT = a; :} 
+                   | gray:a {: RESULT = a; :} | lime:a {: RESULT = a; :} | fuchsia:a {: RESULT = a; :} | green:a {: RESULT = a; :} | white:a {: RESULT = a; :} | purple:a {: RESULT = a; :} | silver:a {: RESULT = a; :} | yellow:a {: RESULT = a; :} | aqua:a {: RESULT = a; :} | valorEntero:a {: RESULT = a; :} | Hexa:a {: RESULT = a; :} | Variable:a {: RESULT = a; :} | Numero:a {: RESULT = a; :} | Aenlace:a {: RESULT = a; :}
+;
