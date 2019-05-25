@@ -79,6 +79,10 @@ public class Pestaña extends javax.swing.JPanel {
 
     }
 
+    public void activarBoton(){
+    this.verHTMLButton.setEnabled(true);
+    }
+    
     private void updateStatus(int linenumber, int columnnumber) {
         lineColLabel.setText("Linea: " + linenumber + " Columna: " + columnnumber);
     }

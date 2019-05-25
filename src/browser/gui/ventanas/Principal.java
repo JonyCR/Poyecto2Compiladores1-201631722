@@ -38,6 +38,9 @@ public class Principal extends javax.swing.JFrame {
     private void initComponents() {
 
         jMenuItem1 = new javax.swing.JMenuItem();
+        jMenu2 = new javax.swing.JMenu();
+        jMenu3 = new javax.swing.JMenu();
+        jMenuItem2 = new javax.swing.JMenuItem();
         filesOpenTabbedPane = new javax.swing.JTabbedPane();
         jMenuBar1 = new javax.swing.JMenuBar();
         optionsMenu = new javax.swing.JMenu();
@@ -50,8 +53,16 @@ public class Principal extends javax.swing.JFrame {
         porErrorMenuItem = new javax.swing.JMenuItem();
         porTipoErrorMenuItem = new javax.swing.JMenuItem();
         porArchivoMenuItem = new javax.swing.JMenuItem();
+        jMenu4 = new javax.swing.JMenu();
+        jMenuItem3 = new javax.swing.JMenuItem();
 
         jMenuItem1.setText("jMenuItem1");
+
+        jMenu2.setText("jMenu2");
+
+        jMenu3.setText("jMenu3");
+
+        jMenuItem2.setText("jMenuItem2");
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Compiladores 1 | Proyecto 2 2019");
@@ -128,6 +139,18 @@ public class Principal extends javax.swing.JFrame {
         jMenu1.add(porArchivoMenuItem);
 
         jMenuBar1.add(jMenu1);
+
+        jMenu4.setText("Ejecutar Todos");
+
+        jMenuItem3.setText("Ejecutar");
+        jMenuItem3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem3ActionPerformed(evt);
+            }
+        });
+        jMenu4.add(jMenuItem3);
+
+        jMenuBar1.add(jMenu4);
 
         setJMenuBar(jMenuBar1);
 
@@ -214,6 +237,13 @@ public class Principal extends javax.swing.JFrame {
         erroresManager.GuardarPorArchivoAnalizado(listaDeNombresArchivos);
     }//GEN-LAST:event_porArchivoMenuItemActionPerformed
 
+    private void jMenuItem3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem3ActionPerformed
+        for (int i = 0; i < listaPestanas.size(); i++) {
+            listaPestanas.get(i).manejador1.analizarTexto();
+            listaPestanas.get(i).activarBoton();
+        }
+    }//GEN-LAST:event_jMenuItem3ActionPerformed
+
     private void ImportarArchivo() {
         JFileChooser fileChooser = new JFileChooser();
         fileChooser.setDialogTitle("Importar archivo de Texto");
@@ -264,8 +294,13 @@ public class Principal extends javax.swing.JFrame {
     private javax.swing.JTabbedPane filesOpenTabbedPane;
     private javax.swing.JMenuItem infoMenuItem;
     private javax.swing.JMenu jMenu1;
+    private javax.swing.JMenu jMenu2;
+    private javax.swing.JMenu jMenu3;
+    private javax.swing.JMenu jMenu4;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JMenuItem jMenuItem1;
+    private javax.swing.JMenuItem jMenuItem2;
+    private javax.swing.JMenuItem jMenuItem3;
     private javax.swing.JMenuItem newFileMenuItem;
     private javax.swing.JMenuItem openFileMenuItem;
     private javax.swing.JMenu optionsMenu;

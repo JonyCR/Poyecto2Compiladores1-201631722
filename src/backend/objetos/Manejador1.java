@@ -67,6 +67,22 @@ public class Manejador1 {
         } catch (Exception e) {
         }
     }
+    
+    public void analizarTexto() {
+        //this.codigoHtml.clear();
+        //this.condicionesIf.clear();
+        this.areaDeHTML.setText("");
+        this.codigoHtmlFinal.clear();
+        this.texto = "";
+        this.print = "";
+        Primer_Analizador_Lexico lexico = new Primer_Analizador_Lexico(new StringReader(this.areaDeEdicion.getText()));
+        Primer_Analizador_Sintactico sintactico = new Primer_Analizador_Sintactico(lexico, this, nombreArchivo, 0);
+        try {
+            nuevoHilo hilo = new nuevoHilo("hilo",sintactico);
+            hilo.start();
+        } catch (Exception e) {
+        }
+    }
 
     public void obtenerErrores(ArrayList<NuevoError> lista) {
         if (erroresRecibidos.isEmpty()) {
