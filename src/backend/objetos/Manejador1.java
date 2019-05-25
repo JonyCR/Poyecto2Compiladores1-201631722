@@ -55,6 +55,7 @@ public class Manejador1 {
     public void analizarTexto(String texto, int tiempo) {
         //this.codigoHtml.clear();
         //this.condicionesIf.clear();
+        this.areaDeHTML.setText("");
         this.codigoHtmlFinal.clear();
         this.texto = "";
         this.print = "";
@@ -528,7 +529,7 @@ public class Manejador1 {
         for (int i = 0; filas > i; i++) {
             modelo.removeRow(0);
         }
-        
+        htmlCompletoF="";
         this.erroresRecibidos.clear();
         this.codigoHtml.clear();
         this.codigoWhile.clear();
