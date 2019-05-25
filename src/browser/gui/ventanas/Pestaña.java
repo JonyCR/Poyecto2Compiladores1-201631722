@@ -272,6 +272,7 @@ public class Pestaña extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void codigoEmbebidoButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_codigoEmbebidoButtonActionPerformed
+        htmlFinalTextArea.setText("");
         manejador1.limpiar();
         int value = (Integer) tiempoSpinner.getValue();
         int tiempoMs = value * 1000;
